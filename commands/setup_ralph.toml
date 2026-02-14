@@ -67,12 +67,18 @@ if __name__ == "__main__":
 1.  **Interview Phase**:
     *   Ask for the **High-Level Objective** (e.g., "Reduce Latency", "Fix bugs in this repo", "Improve Test Coverage").
     *   Ask for the **Phases** (default suggestion: `PLAN`, `EXECUTE`, `VERIFY`, ...).
-    *   For each phase, ask:
-        *   **Goal:** What is the success criteria?
-        *   **Tools:** What scripts or commands should be available?
-    *   Ask for **Cleanup Logic** (e.g., `git reset --hard` on failure).
+    *   **Crucially:** For EACH phase, ask the user to describe:
+        *   **Goal:** What specific outcome is expected?
+        *   **Process:** How should the agent achieve this? (e.g., "Read file X, run script Y").
+    *   **Cleanup Logic:**
+        Ask: "If a phase fails, what command should run to reset the state? (e.g., `git reset --hard`, `rm -rf tmp/`, etc.)"
 
-2.  **Generation Phase**:
+2.  **Investigation Phase:**
+    *   **Analyze the Codebase:** Use tools to understand the project structure.
+    *   **Map Capabilities:** Identify key files, scripts, and testing commands mentioned by the user or relevant to the objective.
+    *   *Goal:* Ensure the generated prompts reference actual files and commands, not generic placeholders.
+
+3.  **Generation Phase**:
     *   **Generate `ralph_config.json`**:
         ```json
         {
@@ -84,7 +90,9 @@ if __name__ == "__main__":
         }
         ```
     *   **Generate `prompts/<phase>.md` (CRITICAL)**:
-        Use this STRICT template for EVERY phase:
+        Use this STRICT template for EVERY phase.
+        **WARNING:** Do NOT modify the "Handover" section logic or keywords. The status MUST be "COMPLETED" or "FAILED" for the hook to trigger. Do NOT invent new statuses like "IMPLEMENTED".
+
         ```markdown
         # PHASE: {{PHASE_NAME}}
 
@@ -95,7 +103,7 @@ if __name__ == "__main__":
         2. Read `ralph_history.md` (if exists) for past attempts.
 
         ## Instructions
-        {{PHASE_SPECIFIC_INSTRUCTIONS}}
+        {{PHASE_SPECIFIC_INSTRUCTIONS_BASED_ON_CODEBASE_ANALYSIS}}
 
         ## Handover (CRITICAL)
         1. Update `.ralph_state.json`:
