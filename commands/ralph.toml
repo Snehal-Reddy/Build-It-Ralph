@@ -1,0 +1,4 @@
+description = "Start or Resume the Ralph Loop"
+prompt = """
+!{python3 hooks/ralph_init.py --print-prompt}
+"""
