@@ -1,0 +1,14 @@
+{
+  "AfterAgent": [
+    {
+      "matcher": "*",
+      "hooks": [
+        {
+          "name": "ralph-loop-manager",
+          "type": "command",
+          "command": "python3 ${extensionPath}/hooks/ralph_loop_engine.py"
+        }
+      ]
+    }
+  ]
+}

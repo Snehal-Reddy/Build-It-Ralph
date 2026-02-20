@@ -5,18 +5,5 @@
   "commands": [
     "commands/setup_ralph.toml",
     "commands/ralph.toml"
-  ],
-  "hooks": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "name": "ralph-loop-manager",
-            "type": "command",
-            "command": "python3 ${extensionPath}/hooks/ralph_loop_engine.py",
-            "description": "Manages Ralph Loop state transitions (active only if ralph_config.json exists)."
-          }
-        ]
-      }
   ]
-}
+  }
