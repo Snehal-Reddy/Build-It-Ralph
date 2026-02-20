@@ -5,7 +5,7 @@ import subprocess
 
 # --- Universal Ralph Loop Engine ---
 # This script manages the state transitions for the Ralph Wiggum Loop.
-# It is designed to be a generic harness, driven by `ralph_config.json`.
+# It is designed to be a generic harness, driven by `.gemini/ralph/config.json`.
 
 def run_command(command):
     """Executes a shell command and returns True if successful."""
@@ -21,8 +21,9 @@ def run_command(command):
 
 def main():
     # 1. Load Configuration
+    CONFIG_PATH = os.path.join(".gemini", "ralph", "config.json")
     try:
-        with open("ralph_config.json", "r") as f:
+        with open(CONFIG_PATH, "r") as f:
             config = json.load(f)
     except FileNotFoundError:
         # Not a Ralph project or not initialized
@@ -30,8 +31,8 @@ def main():
 
     # 2. Resolve Paths
     PROJECT_DIR = os.environ.get("GEMINI_PROJECT_DIR", ".")
-    STATE_FILE = config.get("state_file", ".ralph_state.json")
-    PROMPTS_DIR = config.get("prompts_dir", "prompts")
+    STATE_FILE = config.get("state_file", os.path.join(".gemini", "ralph", "state.json"))
+    PROMPTS_DIR = config.get("prompts_dir", os.path.join(".gemini", "ralph", "prompts"))
 
     # 3. Load State
     if not os.path.exists(STATE_FILE):
@@ -54,7 +55,7 @@ def main():
     current_phase = state.get("phase")
     
     if not phases:
-        print("[Ralph Engine] Error: No phases defined in ralph_config.json")
+        print("[Ralph Engine] Error: No phases defined in .gemini/ralph/config.json")
         return
 
     try:
@@ -113,7 +114,7 @@ def main():
         json.dump(state, f, indent=2)
 
     # 8. Load Next Prompt
-    # Construct filename: e.g., "prompts/PLAN.md" or "prompts/plan_phase.md"
+    # Construct filename: e.g., ".gemini/ralph/prompts/PLAN.md" or ".gemini/ralph/prompts/plan_phase.md"
     # We assume standard naming convention or config mapping.
     # Simple default: "{phase_name_lowercase}.md"
     prompt_filename = f"{next_phase.lower()}.md"
